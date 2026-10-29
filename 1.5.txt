@@ -1,0 +1,216 @@
+BDA EXPERIMENT 6 — HIVE COMMANDS
+Meaning, command syntax, and examples
+Based on “BDA Expt. 6 - HIVE Commands.pdf”
+
+Note:
+- Run HiveQL commands at the Hive prompt unless stated otherwise.
+- Replace placeholders with your database/table names.
+- The examples follow the source document's setup. The PDF has a few mismatches between labels and sample output; notes are included where useful.
+
+1. ENTER HIVE TERMINAL
+
+# Meaning: Start the Hive command-line terminal.
+Command syntax:
+hive
+
+Example:
+hive
+
+
+2. SHOW DATABASES
+
+# Meaning: Display the databases available in Hive.
+Command syntax:
+SHOW DATABASES;
+
+Example:
+SHOW DATABASES;
+
+
+3. SHOW TABLES
+
+# Meaning: Display tables in the currently selected database.
+Command syntax:
+SHOW TABLES;
+
+Example:
+SHOW TABLES;
+
+
+4. SELECT A DATABASE
+
+# Meaning: Select a database for subsequent Hive operations.
+Command syntax:
+USE <database_name>;
+
+Example (from the PDF):
+USE bank;
+
+
+5. CREATE A DATABASE
+
+# Meaning: Create a new Hive database.
+Command syntax:
+CREATE DATABASE <database_name>;
+
+Example (from the PDF):
+CREATE DATABASE retail;
+
+
+6. CREATE A TABLE
+
+# Meaning: Create a table with columns, data types, and comma-delimited text-file storage.
+Command syntax:
+CREATE TABLE <table_name> (
+    id INT,
+    name STRING,
+    sal DOUBLE
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+Example (from the PDF):
+USE retail;
+CREATE TABLE emp (
+    id INT,
+    name STRING,
+    sal DOUBLE
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+Note: The PDF's screenshot also shows “USE bank” in the worked output despite the step describing the retail database.
+
+
+7. DESCRIBE TABLE SCHEMA
+
+# Meaning: Display a table's column names and data types.
+Command syntax:
+DESCRIBE <table_name>;
+
+Example (from the PDF):
+USE retail;
+DESCRIBE emp;
+
+
+8. VIEW A LOCAL TEXT FILE
+
+# Meaning: Use the operating system's cat command to display a local file. Run this in the system terminal, not HiveQL.
+Command syntax:
+cat <local_file_path>
+
+Example (from the PDF):
+cat /home/training/demo.txt
+
+Example contents shown in the PDF:
+1,abc,2000
+2,pqr,4500
+
+
+9. LOAD LOCAL DATA INTO A HIVE TABLE
+
+# Meaning: Load data from a local file into an existing Hive table.
+Command syntax:
+LOAD DATA LOCAL INPATH '<local_file_path>' INTO TABLE <table_name>;
+
+Example (from the PDF):
+LOAD DATA LOCAL INPATH '/home/training/demo.txt' INTO TABLE emp;
+
+Additional path shown in the PDF's terminal example:
+LOAD DATA LOCAL INPATH '/home/cloudera/demo.txt' INTO TABLE emp;
+
+Note: Use the path where your file actually exists. The PDF's sample output later displays five employee records from its own demo file.
+
+
+10. VIEW ALL TABLE RECORDS
+
+# Meaning: Select and display every row and column in a table.
+Command syntax:
+SELECT * FROM <table_name>;
+
+Example (from the PDF):
+SELECT * FROM emp;
+
+
+11. RENAME A TABLE
+
+# Meaning: Change a table's name.
+Command syntax:
+ALTER TABLE <old_table_name> RENAME TO <new_table_name>;
+
+Example (from the PDF):
+USE retail;
+ALTER TABLE emp RENAME TO emp_sal;
+
+
+12. SELECT ROWS USING A CONDITION
+
+# Meaning: Retrieve rows that satisfy a condition.
+Command syntax:
+SELECT * FROM <table_name> WHERE <condition>;
+
+Example (PDF's shown query):
+SELECT * FROM emp_sal WHERE id = 1;
+
+The PDF's terminal output instead demonstrates:
+SELECT * FROM emp_sal WHERE id = 12;
+
+Note: The document's command and displayed output use different id values.
+
+
+13. COUNT TABLE RECORDS
+
+# Meaning: Return the number of records in a table.
+Command syntax:
+SELECT COUNT(*) FROM <table_name>;
+
+Example (from the PDF):
+SELECT COUNT(*) FROM emp_sal;
+
+
+14. CALCULATE AVERAGE
+
+# Meaning: Calculate the average value of a numeric column.
+Command syntax:
+SELECT AVG(<column_name>) AS <alias> FROM <table_name>;
+
+Example (from the PDF):
+SELECT AVG(sal) AS avg_salary FROM emp_sal;
+
+
+15. CALCULATE MAXIMUM
+
+# Meaning: Find the maximum value in a numeric column.
+Command syntax:
+SELECT MAX(<column_name>) AS <alias> FROM <table_name>;
+
+Example (from the PDF):
+SELECT MAX(sal) AS max_salary FROM emp_sal;
+
+
+16. DROP A TABLE
+
+# Meaning: Delete a table from Hive.
+Command syntax:
+DROP TABLE <table_name>;
+
+Example (from the PDF):
+DROP TABLE emp_sal;
+
+
+17. EXIT HIVE TERMINAL
+
+# Meaning: Exit the Hive command-line terminal.
+Command syntax:
+EXIT;
+
+Example:
+EXIT;
+
+
+ADDITIONAL NOTES
+- The PDF's sample aggregate outputs show AVG(sal) = 3000.0 and MAX(sal) = 5000.0 for its example data.
+- Hive is presented in the PDF as a SQL-like data warehouse system whose HQL queries are internally converted to MapReduce jobs.
+- The source document lists Hive limitations: it is not intended for OLTP, and it notes limitations around updates/deletes and subqueries. These are source-document statements and may vary by Hive version.

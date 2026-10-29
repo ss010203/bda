@@ -1,0 +1,232 @@
+BDA EXPERIMENT 5 — PIG COMMANDS
+Meaning, command syntax, and examples
+Based on the provided “BDA Expt. 5 - Pig.pdf”
+
+Notes:
+- Start Pig commands at the Grunt prompt unless noted otherwise.
+- Replace paths, relation names, field names, and conditions as needed.
+- Examples below preserve the source document's intended operations. Minor spacing and capitalization have been normalized.
+- The source has some incomplete/legacy syntax examples; see notes where relevant.
+
+1. START PIG
+
+# Meaning: Launch the Pig interactive shell (Grunt).
+Command syntax:
+pig
+
+Example:
+pig
+
+
+2. LIST FILES USING PIG'S FS COMMAND
+
+# Meaning: List files and directories in the filesystem through Pig Grunt.
+Command syntax:
+fs -ls <path>
+
+Example (general):
+fs -ls /
+
+Example (the PDF shows the command as “fs -ls” without a path):
+fs -ls
+
+
+3. COPY A LOCAL FILE TO THE FILESYSTEM
+
+# Meaning: Copy a local file into the specified destination directory.
+Command syntax:
+copyFromLocal <local_file_path> <destination_path>
+
+Example (from the PDF):
+copyFromLocal /home/training/sample.txt /user/training/
+
+Another example (from the PDF):
+copyFromLocal /home/training/students.txt /user/training/
+
+
+4. DISPLAY A FILE USING GRUNT
+
+# Meaning: Print a file's contents in the Pig shell.
+Command syntax:
+cat <file_path>
+
+Example (from the PDF):
+cat sample.txt
+
+Another example:
+cat students.txt
+
+
+5. LOAD DATA
+
+# Meaning: Load a delimited text file as a Pig relation and define its field names and types.
+Command syntax:
+<relation> = LOAD '<hdfs_path>' USING PigStorage('<delimiter>')
+    AS (<field1>:<type>, <field2>:<type>, ...);
+
+Example (from the PDF):
+student = LOAD '/user/training/students.txt' USING PigStorage(',')
+    AS (rollno:int, name:chararray, percentage:float, sex:chararray);
+
+
+6. DISPLAY RELATION DATA (DUMP)
+
+# Meaning: Execute the relation and print its contents.
+Command syntax:
+DUMP <relation>;
+
+Example:
+DUMP student;
+
+
+7. PROJECTION USING FOREACH ... GENERATE
+
+# Meaning: Select specified fields from each tuple in a relation.
+Command syntax:
+<new_relation> = FOREACH <relation> GENERATE <field1>, <field2>, ...;
+
+Example (from the PDF):
+Studentname = FOREACH student GENERATE name;
+DUMP Studentname;
+
+
+8. LOAD THE DEPARTMENT DATA
+
+# Meaning: Load department records into a Pig relation with a declared schema.
+Command syntax:
+<relation> = LOAD '<hdfs_path>' USING PigStorage(',')
+    AS (id:int, name:chararray, deptname:chararray, sal:int);
+
+Example (from the PDF):
+dept = LOAD '/user/training/department.txt' USING PigStorage(',')
+    AS (id:int, name:chararray, deptname:chararray, sal:int);
+DUMP dept;
+
+Sample department file contents from the PDF:
+10,sushil,engineer,50000
+10,nikhil,engineer,45000
+10,supriya,engineer,50000
+10,siddesh,engineer,44000
+20,manish,clerk,20000
+20,mahesh,clerk,25000
+30,minal,scientist,60000
+30,krishna,scientist,80000
+30,govind,scientist,60000
+50,rahul,chemist,80000
+40,neha,biochemist,90000
+
+
+9. CROSS OPERATOR
+
+# Meaning: Calculate the Cartesian product of two or more relations.
+Command syntax:
+<new_relation> = CROSS <relation1>, <relation2>;
+
+Example (from the PDF):
+DUMP student;
+DUMP dept;
+x = CROSS student, dept;
+DUMP x;
+
+
+10. DISTINCT OPERATOR
+
+# Meaning: Remove duplicate tuples from a relation. The source notes that original order is not preserved.
+Command syntax:
+<new_relation> = DISTINCT <relation>;
+
+Example (from the PDF):
+A = LOAD '/user/training/dumA.txt' USING PigStorage(',')
+    AS (a1:int, a2:int, a3:int, a4:int);
+DUMP A;
+z = DISTINCT A;
+DUMP z;
+
+Sample dumA.txt values shown in the PDF:
+1,2,2,3,4
+2,4,5,65
+2,4,5,65
+23,44,3,2
+23,44,3,2
+1,2,3,4
+4,3,2,1
+5,6,7,8
+
+
+11. FILTER OPERATOR
+
+# Meaning: Select tuples that satisfy a specified condition.
+Command syntax:
+<new_relation> = FILTER <relation> BY <condition>;
+
+Example 1 (from the PDF):
+A = LOAD '/user/training/dumA.txt' USING PigStorage(',')
+    AS (a1:int, a2:int, a3:int, a4:int);
+DUMP A;
+y = FILTER A BY a2 == 2;
+DUMP y;
+
+Example 2 (from the PDF):
+DUMP dept;
+y = FILTER dept BY deptname == 'engineer';
+DUMP y;
+
+
+12. FOREACH OPERATOR
+
+# Meaning: Transform each tuple or project selected columns from a relation.
+Command syntax:
+<new_relation> = FOREACH <relation> GENERATE <field1>, <field2>, ...;
+
+Example (from the PDF):
+X = FOREACH dept GENERATE id, name;
+DUMP X;
+
+
+13. COGROUP OPERATOR
+
+# Meaning: Group two relations together by key fields, producing grouped bags for matching keys.
+Command syntax (source-style form):
+<new_relation> = COGROUP <relation1> BY <key1> INNER,
+                        <relation2> BY <key2> INNER;
+
+Example (from the PDF):
+A = LOAD '/user/training/dumA.txt' USING PigStorage(',')
+    AS (a1:int, a2:int, a3:int, a4:int);
+DUMP A;
+
+B = LOAD '/user/training/dumB.txt' USING PigStorage(',')
+    AS (b1:int, b2:int);
+DUMP B;
+
+C = COGROUP A BY a1 INNER, B BY b1 INNER;
+DUMP C;
+
+Note: The example follows the INNER form printed in the PDF. Check compatibility with the installed Pig version if it errors.
+
+
+14. NESTED PROJECTION ON COGROUP RESULTS
+
+# Meaning: Project fields nested inside a grouped relation's bag.
+Command syntax (field from B):
+<new_relation> = FOREACH <cogroup_relation> GENERATE group, <relation_alias>.<field>;
+
+Command syntax (selected fields from A):
+<new_relation> = FOREACH <cogroup_relation> GENERATE group, A.(<field1>, <field2>);
+
+Example (from the PDF):
+Z = FOREACH C GENERATE group, B.b2;
+DUMP Z;
+
+Z = FOREACH C GENERATE group, A.(a1, a2);
+DUMP Z;
+
+
+15. EXIT PIG GRUNT
+
+# Meaning: Exit the interactive Pig shell.
+Command syntax:
+quit
+
+Example:
+quit

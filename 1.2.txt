@@ -1,0 +1,197 @@
+EXPERIMENT 3 — SQOOP: TRANSFER DATA BETWEEN HADOOP AND MYSQL
+Commands extracted from the provided PDF
+
+Note:
+- Replace placeholders such as <database_name>, <table_name>, and <target_directory> with your values.
+- Commands are grouped by purpose. The examples follow the document's setup.
+- The PDF has a few missing spaces in its displayed Sqoop examples; spacing is normalized below.
+
+1. CONNECT TO MYSQL
+
+# Meaning: Log in to MySQL as the root user and prompt for the password.
+Command syntax:
+mysql -u <username> -p
+
+Example:
+mysql -u root -p
+
+
+2. CREATE A DATABASE
+
+# Meaning: Create a new MySQL database.
+Command syntax:
+CREATE DATABASE <database_name>;
+
+Example:
+CREATE DATABASE bank;
+
+
+3. SHOW DATABASES
+
+# Meaning: Display the databases available in MySQL.
+Command syntax:
+SHOW DATABASES;
+
+Example:
+SHOW DATABASES;
+
+
+4. SELECT A DATABASE
+
+# Meaning: Set the database to use for subsequent SQL commands.
+Command syntax:
+USE <database_name>;
+
+Example:
+USE bank;
+
+
+5. CREATE THE REGISTER TABLE
+
+# Meaning: Create a table with account and user details.
+Command syntax:
+CREATE TABLE <table_name>(
+  accno VARCHAR(20),
+  name VARCHAR(20),
+  number VARCHAR(10),
+  email VARCHAR(30),
+  password VARCHAR(10),
+  age VARCHAR(3)
+);
+
+Example:
+CREATE TABLE register(
+  accno VARCHAR(20),
+  name VARCHAR(20),
+  number VARCHAR(10),
+  email VARCHAR(30),
+  password VARCHAR(10),
+  age VARCHAR(3)
+);
+
+
+6. DESCRIBE A TABLE
+
+# Meaning: Display the table's columns and their definitions.
+Command syntax:
+DESCRIBE <table_name>;
+
+Example:
+DESCRIBE register;
+
+
+7. INSERT A ROW
+
+# Meaning: Insert one record into the specified table.
+Command syntax:
+INSERT INTO <table_name> VALUES (<value1>, <value2>, ...);
+
+Example:
+INSERT INTO register VALUES ("1","raj","11","raj@gmail.com","raj123","11");
+INSERT INTO register VALUES ("2","tanay","12","tanay@gmail.com","tanay123","12");
+INSERT INTO register VALUES ("3","sid","13","sid@gmail.com","sid123","13");
+INSERT INTO register VALUES ("4","raunak","14","raunak@gmail.com","raunak123","14");
+
+
+8. DISPLAY TABLE RECORDS
+
+# Meaning: Display all rows and columns from a table.
+Command syntax:
+SELECT * FROM <table_name>;
+
+Example:
+SELECT * FROM register;
+
+
+9. EXIT MYSQL
+
+# Meaning: Close the MySQL command-line session.
+Command syntax:
+EXIT;
+
+Example:
+EXIT;
+
+
+10. IMPORT A MYSQL TABLE INTO HDFS USING SQOOP
+
+# Meaning: Import rows from a MySQL table into a target Hadoop directory. -m specifies the number of mappers.
+Command syntax:
+sqoop import --connect jdbc:mysql://<host>:3306/<database_name> --username <username> --password <password> --table <table_name> --target-dir <target_directory> -m <number_of_mappers>
+
+Example:
+sqoop import --connect jdbc:mysql://localhost:3306/bank --username root --password cloudera --table register --target-dir /home/cloudera/myfirstdata -m 1
+
+
+11. LIST THE IMPORTED HDFS DIRECTORY
+
+# Meaning: List files and directories in the specified HDFS path.
+Command syntax:
+hadoop fs -ls <hdfs_path>
+
+Example:
+hadoop fs -ls /home/cloudera/myfirstdata
+
+
+12. DISPLAY AN HDFS FILE
+
+# Meaning: Print the contents of an HDFS file to the terminal.
+Command syntax:
+hadoop fs -cat <hdfs_file_path>
+
+Example:
+hadoop fs -cat /home/cloudera/myfirstdata/part-m-00000
+
+
+13. CREATE THE DESTINATION TABLE FOR EXPORT
+
+# Meaning: Create a MySQL table with the same column structure as the source table for Sqoop export.
+Command syntax:
+CREATE TABLE <destination_table>(
+  accno VARCHAR(20),
+  name VARCHAR(20),
+  number VARCHAR(10),
+  email VARCHAR(30),
+  password VARCHAR(10),
+  age VARCHAR(3)
+);
+
+Example:
+USE bank;
+CREATE TABLE registercopy(
+  accno VARCHAR(20),
+  name VARCHAR(20),
+  number VARCHAR(10),
+  email VARCHAR(30),
+  password VARCHAR(10),
+  age VARCHAR(3)
+);
+
+
+14. EXPORT DATA FROM HDFS TO MYSQL USING SQOOP
+
+# Meaning: Export records from files in HDFS into an existing MySQL table.
+Command syntax:
+sqoop export --connect jdbc:mysql://<host>/<database_name> --username <username> --password <password> --table <table_name> --export-dir <hdfs_directory>
+
+Example:
+sqoop export --connect jdbc:mysql://localhost/bank --username root --password cloudera --table registercopy --export-dir /home/cloudera/myfirstdata
+
+
+15. VERIFY THE EXPORTED DATA
+
+# Meaning: Select the database and display all rows in the destination table to verify the export.
+Command syntax:
+USE <database_name>;
+SELECT * FROM <table_name>;
+
+Example:
+USE bank;
+SELECT * FROM registercopy;
+
+
+COMMAND NOTES
+- MySQL's default port shown in the document is 3306.
+- The document uses -m 1 for import (one mapper).
+- The Sqoop export destination table must already exist and have a compatible structure.
+- The document's examples use the legacy Cloudera/Sqoop environment.

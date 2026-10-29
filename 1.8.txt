@@ -1,0 +1,394 @@
+BDA EXPERIMENT — MONGODB COMMANDS
+Meaning, command syntax, and examples
+Based on the uploaded “BDA Expt. 7- MongoDb.pdf”
+
+Notes:
+- The PDF demonstrates MongoDB shell version 3.6.13 on Ubuntu 16.04 and uses the legacy `mongo` shell.
+- Run Linux setup/service commands in the system terminal.
+- Run MongoDB commands at the Mongo shell prompt.
+- Replace placeholders with your database, collection, field, and value names.
+- Examples and behavior notes follow the source document.
+
+SECTION A — INSTALLATION AND SERVICE COMMANDS
+
+1. ADD THE MONGODB PACKAGE SIGNING KEY
+
+# Meaning: Add the MongoDB repository signing key.
+Command syntax:
+sudo apt-key adv --keyserver <keyserver> --recv <key_fingerprint>
+
+Example (from the PDF):
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+
+
+2. ADD THE MONGODB PACKAGE REPOSITORY
+
+# Meaning: Add the MongoDB repository to the system's APT sources.
+Command syntax:
+echo "<repository_entry>" | sudo tee <repository_list_file>
+
+Example (from the PDF):
+echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.6 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.6.list
+
+
+3. UPDATE APT PACKAGE LISTS
+
+# Meaning: Refresh the package index from configured repositories.
+Command syntax:
+sudo apt-get update
+
+Example:
+sudo apt-get update
+
+
+4. INSTALL MONGODB
+
+# Meaning: Install the MongoDB package.
+Command syntax:
+sudo apt-get install -y mongodb-org
+
+Example:
+sudo apt-get install -y mongodb-org
+
+
+5. ENABLE THE MONGODB SERVICE
+
+# Meaning: Configure the MongoDB service to start automatically at boot.
+Command syntax:
+sudo systemctl enable mongod
+
+Example:
+sudo systemctl enable mongod
+
+
+6. RESTART THE MONGODB SERVICE
+
+# Meaning: Restart the MongoDB server service.
+Command syntax:
+sudo service mongod restart
+
+Example:
+sudo service mongod restart
+
+
+7. STOP THE MONGODB SERVICE
+
+# Meaning: Stop the MongoDB server.
+Command syntax:
+sudo service mongod stop
+
+Example:
+sudo service mongod stop
+
+
+8. UNINSTALL MONGODB PACKAGES
+
+# Meaning: Purge installed MongoDB-org packages from the system.
+Command syntax:
+sudo apt-get purge mongodb-org*
+
+Example:
+sudo apt-get purge mongodb-org*
+
+
+9. REMOVE MONGODB LOG DIRECTORY
+
+# Meaning: Remove the MongoDB log directory (destructive).
+Command syntax:
+sudo rm -r <log_directory>
+
+Example (from the PDF):
+sudo rm -r /var/log/mongodb
+
+
+10. REMOVE MONGODB DATA DIRECTORY
+
+# Meaning: Remove MongoDB's data directory (destructive; stored database data will be deleted).
+Command syntax:
+sudo rm -r <data_directory>
+
+Example (from the PDF):
+sudo rm -r /var/lib/mongodb
+
+
+SECTION B — MONGODB SHELL COMMANDS
+
+11. CONNECT TO MONGODB
+
+# Meaning: Open the MongoDB shell.
+Command syntax:
+mongo
+
+Example:
+mongo
+
+
+12. SELECT OR CREATE A DATABASE
+
+# Meaning: Switch to a database. MongoDB creates it when data is first stored in it.
+Command syntax:
+use <database_name>
+
+Example (from the PDF):
+use retail
+
+
+13. CHECK THE CURRENT DATABASE
+
+# Meaning: Display the name of the currently selected database.
+Command syntax:
+db
+
+Example:
+db
+
+
+14. LIST DATABASES
+
+# Meaning: Display databases that currently contain stored data.
+Command syntax:
+show dbs
+
+Example:
+show dbs
+
+
+15. INSERT A DOCUMENT INTO A COLLECTION
+
+# Meaning: Insert a document into a collection. MongoDB creates the collection automatically if needed.
+Command syntax:
+db.<collection_name>.insert({<field>: <value>})
+
+Example (from the PDF):
+db.sales.insert({"name":"Poonam"})
+
+
+16. DROP THE CURRENT DATABASE
+
+# Meaning: Delete the currently selected database and its data.
+Command syntax:
+db.dropDatabase()
+
+Example (from the PDF):
+use mydb
+db.dropDatabase()
+
+
+17. CREATE A COLLECTION
+
+# Meaning: Create a collection without additional options.
+Command syntax:
+db.createCollection("<collection_name>")
+
+Example (from the PDF):
+db.createCollection("products")
+
+
+18. LIST COLLECTIONS
+
+# Meaning: Display the collections in the current database.
+Command syntax:
+show collections
+
+Example:
+show collections
+
+
+19. CREATE A CAPPED COLLECTION WITH OPTIONS
+
+# Meaning: Create a capped collection with a configured size and maximum document count.
+Command syntax:
+db.createCollection("<collection_name>", {capped:true, size:<size_in_bytes>, max:<max_documents>})
+
+Example (source-style; the PDF also specifies the deprecated autoIndexId option):
+db.createCollection("gadgets", {capped:true, autoIndexId:true, size:6142800, max:1000})
+
+Note: The PDF's MongoDB version reports that autoIndexId is deprecated.
+
+
+20. INSERT INTO A COLLECTION (DOCUMENT FIELDS)
+
+# Meaning: Add a document with multiple fields to a collection.
+Command syntax:
+db.<collection_name>.insert({<field1>: '<value1>', <field2>: '<value2>'})
+
+Example (from the PDF):
+db.gadgets.insert({title: 'I-Phone', by: 'Apple'})
+
+
+21. DISPLAY ALL DOCUMENTS IN FORMATTED FORM
+
+# Meaning: Retrieve documents from a collection and display them in a readable format.
+Command syntax:
+db.<collection_name>.find().pretty()
+
+Example:
+db.gadgets.find().pretty()
+
+
+22. INSERT ADDITIONAL DOCUMENTS
+
+# Meaning: Insert another document, optionally with extra fields.
+Command syntax:
+db.<collection_name>.insert({<field1>: '<value1>', <field2>: '<value2>', <field3>: '<value3>'})
+
+Examples (from the PDF):
+db.gadgets.insert({title: 'I-Phone 10', by: 'Apple'})
+db.gadgets.insert({title: 'I-Phone 10', by: 'Apple', description: 'Juhi'})
+db.gadgets.insert({title: 'Samsung J7 Pro', by: 'Samsung', description: 'Varsha'})
+
+
+23. QUERY WITH AND
+
+# Meaning: Find documents satisfying all listed conditions.
+Command syntax:
+db.<collection_name>.find({$and:[{<field1>:<value1>},{<field2>:<value2>}] }).pretty()
+
+Example (from the PDF):
+db.gadgets.find({$and:[{"by":"Apple"},{"title":"I-Phone 10"}]}).pretty()
+
+
+24. QUERY WITH OR
+
+# Meaning: Find documents satisfying at least one of the listed conditions.
+Command syntax:
+db.<collection_name>.find({$or:[{<field1>:<value1>},{<field2>:<value2>}] }).pretty()
+
+Example (from the PDF):
+db.gadgets.find({$or:[{"by":"Apple"},{"by":"Samsung"}]}).pretty()
+
+
+25. COMBINE A CONDITION WITH OR
+
+# Meaning: Find documents matching the main field condition and at least one condition in the $or list.
+Command syntax:
+db.<collection_name>.find({<field>:<value>, $or:[{<field1>:<value1>},{<field2>:<value2>}] }).pretty()
+
+Example (from the PDF):
+db.gadgets.find({"title":"I-Phone 10", $or:[{"by":"Apple"},{"description":"Juhi"}]}).pretty()
+
+
+26. UPDATE A DOCUMENT USING $SET
+
+# Meaning: Change a field value in a matching document.
+Command syntax:
+db.<collection_name>.update({<query>}, {$set:{<field>:<new_value>}})
+
+Example attempted in the PDF:
+db.gadgets.update({"title":"I-Phone"}, {$set:{"title":"I-Phone X"}})
+
+Note: The PDF says this update errors because gadgets is a capped collection and the document size would change.
+
+
+27. INSERT INTO A NON-CAPPED COLLECTION
+
+# Meaning: Add a document to a regular collection that permits the update demonstrated next.
+Command syntax:
+db.<collection_name>.insert({<field1>:'<value1>', <field2>:'<value2>', <field3>:'<value3>'})
+
+Example (from the PDF):
+db.sales.insert({title:'Samsung J7 Pro', by:'Samsung', description:'Varsha'})
+
+
+28. UPDATE A DOCUMENT IN A REGULAR COLLECTION
+
+# Meaning: Update the title field for a document matching the query.
+Command syntax:
+db.<collection_name>.update({<query>}, {$set:{<field>:<new_value>}})
+
+Example (from the PDF):
+db.sales.update({"title":"Samsung J7 Pro"}, {$set:{"title":"Samsung J7"}})
+
+
+29. DISPLAY DOCUMENTS IN A COLLECTION
+
+# Meaning: Retrieve documents from the selected collection.
+Command syntax:
+db.<collection_name>.find()
+
+Example (from the PDF):
+db.sales.find()
+
+
+30. REMOVE MATCHING DOCUMENTS
+
+# Meaning: Remove documents matching the specified query.
+Command syntax:
+db.<collection_name>.remove({<query>})
+
+Example (from the PDF):
+db.sales.remove({"title":"Samsung J7"})
+
+Note: The PDF reports nRemoved = 2 for its sample run.
+
+
+31. PROJECT SELECTED FIELDS
+
+# Meaning: Include or exclude fields in query results. A value of 1 includes a field; 0 excludes it.
+Command syntax:
+db.<collection_name>.find({}, {<field>:1, _id:0})
+
+Example (from the PDF):
+db.gadgets.find({}, {"description":1, _id:0})
+
+
+32. LIMIT THE NUMBER OF RESULTS
+
+# Meaning: Restrict the number of documents returned.
+Command syntax:
+db.<collection_name>.find({}, {<field>:1, _id:0}).limit(<number>)
+
+Example (from the PDF):
+db.gadgets.find({}, {"title":1, _id:0}).limit(2)
+
+
+33. SKIP RESULTS
+
+# Meaning: Skip a number of documents in the query results.
+Command syntax:
+db.<collection_name>.find({}, {<field>:1, _id:0}).limit(<limit>).skip(<number_to_skip>)
+
+Example (from the PDF):
+db.gadgets.find({}, {"title":1, _id:0}).limit(1).skip(1)
+
+
+34. SORT QUERY RESULTS
+
+# Meaning: Sort results by a field. Use 1 for ascending order and -1 for descending order.
+Command syntax:
+db.<collection_name>.find({}, {<field>:1, _id:0}).sort({<sort_field>:1_or_minus_1})
+
+Example (from the PDF):
+db.gadgets.find({}, {"title":1, _id:0}).sort({"title":-1})
+
+
+35. CREATE AN INDEX
+
+# Meaning: Create an index on one or more fields.
+Command syntax (as used in the PDF):
+db.<collection_name>.ensureIndex({<field1>:1_or_minus_1, <field2>:1_or_minus_1})
+
+Example (from the PDF):
+db.gadgets.ensureIndex({"title":-1, "description":1})
+
+Note: `ensureIndex()` is the legacy method shown by the document.
+
+
+36. AGGREGATE AND GROUP DOCUMENTS
+
+# Meaning: Group documents by a field and count documents in each group using $sum.
+Command syntax:
+db.<collection_name>.aggregate([{$group:{_id:"$<group_field>", <output_field>:{$sum:1}}}])
+
+Example (from the PDF):
+db.gadgets.aggregate([{$group:{_id:"$by", Brand:{$sum:1}}}])
+
+
+37. EXIT THE MONGODB SHELL
+
+# Meaning: Leave the MongoDB shell.
+Command syntax:
+exit
+
+Example:
+exit

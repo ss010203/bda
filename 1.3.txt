@@ -1,0 +1,205 @@
+BDA EXPERIMENT 4 — HBASE COMMANDS
+Command meanings, syntax, and examples
+Extracted from the provided “BDA Expt 3 - Hbase Commands.pdf”
+
+Note:
+- Run HBase commands inside the HBase shell unless stated otherwise.
+- Replace placeholders with your own table, row, column-family, column, and value names.
+- The PDF's sample table is named register.
+- The PDF shows a few example commands with legacy HBase shell formatting.
+
+1. START HBASE SHELL
+
+# Meaning: Open the HBase shell to execute HBase commands.
+Command syntax:
+hbase shell
+
+Example:
+hbase shell
+
+
+2. CREATE A TABLE
+
+# Meaning: Create an HBase table with the specified column family/families.
+Command syntax:
+create '<table_name>', '<column_family>'
+
+Example (shown in the PDF):
+create 'register', 'personal data', 'account data'
+
+Note: The example is reproduced from the PDF.
+
+
+3. LIST TABLES
+
+# Meaning: Display the tables available in HBase.
+Command syntax:
+list
+
+Example:
+list
+
+
+4. DISABLE A TABLE
+
+# Meaning: Disable a table. This is required before dropping it or changing certain settings.
+Command syntax:
+disable '<table_name>'
+
+Example:
+disable 'register'
+
+
+5. CHECK WHETHER A TABLE IS DISABLED
+
+# Meaning: Check whether the specified table is disabled.
+Command syntax:
+is_disabled '<table_name>'
+
+Example:
+is_disabled 'register'
+
+
+6. ENABLE A TABLE
+
+# Meaning: Enable a previously disabled table.
+Command syntax:
+enable '<table_name>'
+
+Example:
+enable 'register'
+
+
+7. DESCRIBE A TABLE
+
+# Meaning: Display a table's description, including its column-family configuration.
+Command syntax:
+describe '<table_name>'
+
+Example:
+describe 'register'
+
+
+8. ALTER A COLUMN FAMILY'S MAXIMUM VERSIONS
+
+# Meaning: Change the maximum number of cell versions retained for a column family.
+Command syntax:
+alter '<table_name>', NAME => '<column_family>', VERSIONS => <number>
+
+Example (the PDF's general syntax example):
+alter 't1', NAME => 'f1', VERSIONS => 5
+
+Example (table used in the PDF):
+alter 'register', NAME => 'name', VERSION => 5
+
+Note: The PDF's worked example uses VERSION (singular) and reports an “Unknown argument” message. The general syntax above follows the PDF's VERSIONS form.
+
+
+9. CHECK WHETHER A TABLE EXISTS
+
+# Meaning: Verify whether the specified table exists.
+Command syntax:
+exists '<table_name>'
+
+Example:
+exists 'register'
+
+
+10. DROP A TABLE
+
+# Meaning: Delete a table. The table must be disabled first.
+Command syntax:
+disable '<table_name>'
+drop '<table_name>'
+
+Example:
+disable 'register'
+drop 'register'
+
+
+11. INSERT DATA (PUT COMMAND)
+
+# Meaning: Insert a value into a specific row and column. In HBase, put also creates or replaces that cell's value.
+Command syntax:
+put '<table_name>', '<row_key>', '<column_family>:<column_qualifier>', '<value>'
+
+Examples (from the PDF):
+put 'register','1','personal data:name','raj'
+put 'register','1','personal data:age','11'
+put 'register','1','personal data:email','raj@gmail.com'
+put 'register','1','account data:accno','1'
+
+
+12. SCAN A TABLE
+
+# Meaning: Display data from the table.
+Command syntax:
+scan '<table_name>'
+
+Example:
+scan 'register'
+
+
+13. UPDATE DATA (PUT COMMAND)
+
+# Meaning: Update an existing cell. The new value replaces the current value for that row and column.
+Command syntax:
+put '<table_name>', '<row_key>', '<column_family>:<column_qualifier>', '<new_value>'
+
+Example (from the PDF):
+put 'register','1','personal data:age','18'
+
+Verify:
+scan 'register'
+
+
+14. READ ONE ROW (GET COMMAND)
+
+# Meaning: Retrieve cells belonging to a single row key.
+Command syntax:
+get '<table_name>', '<row_key>'
+
+Example:
+get 'register','1'
+
+
+15. DELETE A SPECIFIC CELL
+
+# Meaning: Delete a specific cell/version from a row. The PDF's syntax includes a timestamp.
+Command syntax (as shown in the PDF):
+delete '<table_name>', '<row_key>', '<column_name>', '<time_stamp>'
+
+Example (from the PDF):
+delete 'register','1','personal data:name',1661584013135
+
+Note: The example uses the timestamp shown in the PDF.
+
+
+16. COUNT ROWS
+
+# Meaning: Count the rows in a table.
+Command syntax:
+count '<table_name>'
+
+Example:
+count 'register'
+
+
+17. TRUNCATE A TABLE
+
+# Meaning: Disable, drop, and recreate a table, clearing its data.
+Command syntax:
+truncate '<table_name>'
+
+Example:
+truncate 'register'
+
+
+18. EXIT HBASE SHELL
+
+# Meaning: Leave the HBase shell.
+Command syntax:
+exit
+
+Example:
+exit
